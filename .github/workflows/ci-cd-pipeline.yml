@@ -1,0 +1,38 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      -main
+  pull-request:
+    branches:
+      -main
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: action/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependecies
+        uses: npm install
+
+      - name: Run tests
+        run: npm test
+  
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Deploy application
+        run: |
+          echo "Deploying Application..."
